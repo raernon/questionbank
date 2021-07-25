@@ -1,0 +1,300 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Questionbank API",
+    "description": "This application gives you test questions and checks its correctness.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/api/checklist": {
+      "post": {
+        "tags": [
+          "Operations on questionbank"
+        ],
+        "summary": "Check the correctness of a list of answers and return the correct answers and explanations",
+        "operationId": "checkAnswerList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CheckCommand"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Question not found by the given id.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Return the correctness of a list of answers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/check": {
+      "post": {
+        "tags": [
+          "Operations on questionbank"
+        ],
+        "summary": "Check the correctness of an answer and return the correct answer and explanation",
+        "operationId": "checkOneAnswer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Question not found by the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Return the correctness of an answer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionlist/{count}": {
+      "get": {
+        "tags": [
+          "Operations on questionbank"
+        ],
+        "summary": "Query a list of questions and its possible answers",
+        "operationId": "getQuestionList",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "description": "Number of questions, minimum 2, maximum 50.",
+            "required": true,
+            "schema": {
+              "maximum": 50,
+              "minimum": 2,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Question not found if database is empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Return a list of questions and its possible answers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question": {
+      "get": {
+        "tags": [
+          "Operations on questionbank"
+        ],
+        "summary": "Query a question with its possible answers",
+        "operationId": "getOneQuestion",
+        "responses": {
+          "404": {
+            "description": "Question not found if database is empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Return a question with its possible answers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Field name related to the error.",
+            "example": "id"
+          },
+          "message": {
+            "type": "string",
+            "description": "Textual representation of this error.",
+            "example": "Question not found."
+          }
+        }
+      },
+      "CheckCommand": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "description": "The id of the question.",
+            "format": "int64",
+            "example": 1
+          },
+          "selectedAnswerIds": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "description": "List of all the ids of the answers, which marked as correct.",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer",
+              "description": "List of all the ids of the answers, which marked as correct.",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "AnswerInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of this answer",
+            "format": "int64",
+            "example": 1
+          },
+          "answer": {
+            "type": "string",
+            "description": "The text of this answer",
+            "example": "Four."
+          }
+        },
+        "description": "List of all answers related to this question"
+      },
+      "CheckInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The id of the question.",
+            "format": "int64",
+            "example": 1
+          },
+          "correct": {
+            "type": "boolean",
+            "description": "Whether all the answer was correct.",
+            "example": true
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Explanation for the right answer(s).",
+            "example": "The 'JAVA' word consists of four letters."
+          },
+          "correctAnswers": {
+            "type": "array",
+            "description": "List of all the correct answers.",
+            "items": {
+              "$ref": "#/components/schemas/AnswerInfo"
+            }
+          }
+        }
+      },
+      "QuestionInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of this question",
+            "format": "int64",
+            "example": 1
+          },
+          "question": {
+            "type": "string",
+            "description": "Text of this question",
+            "example": "How many letters are in word 'JAVA'?"
+          },
+          "multipleAnswers": {
+            "type": "boolean",
+            "description": "Whether this question has multiple right answers",
+            "example": false
+          },
+          "answers": {
+            "type": "array",
+            "description": "List of all answers related to this question",
+            "items": {
+              "$ref": "#/components/schemas/AnswerInfo"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -41,3 +41,6 @@ spring:
 
 You can reach the OpenAPI documentation of this backend on the following url if the application runs:
 `http://host:port/swagger-ui.html`
+
+The API docs available in the docs folder as `OpenAPI-doc.json`, you can paste its content to https://editor.swagger.io
+to read it in human readable format.
