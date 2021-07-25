@@ -36,3 +36,8 @@ spring:
 ```
 > java -jar questionbank-1.0.jar 
 ```
+
+## Notes for frontend developers
+
+You can reach the OpenAPI documentation of this backend on the following url if the application runs:
+`http://host:port/swagger-ui.html`
