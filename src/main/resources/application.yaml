@@ -3,7 +3,7 @@ server:
   
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/qb
+    url: jdbc:mysql://localhost:3306/questionbank
     username: root
     password: root
 

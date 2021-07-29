@@ -18,8 +18,12 @@ import java.util.Random;
         ),
         servers = {
                 @Server(
+                        description = "Live server",
+                        url = "https://webdevquiz.mysqlhost.ml:8090"
+                ),
+                @Server(
                         description = "Local development server",
-                        url = "http://localhost:8080"
+                        url = "http://localhost:8090"
                 )
         }
 )

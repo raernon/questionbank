@@ -26,6 +26,7 @@ import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api")
 @Validated
 @Slf4j
